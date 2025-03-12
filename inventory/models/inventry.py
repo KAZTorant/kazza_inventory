@@ -27,10 +27,7 @@ class InventoryItem(models.Model):
         choices=UNIT_CHOICES,
         verbose_name="Vahid"
     )
-    price = models.FloatField(
-        verbose_name="Qiymət",
-        default=0
-    )
+
     supplier = models.ForeignKey(
         Supplier,
         on_delete=models.SET_NULL,
@@ -98,6 +95,10 @@ class InventoryRecord(models.Model):
         default="purchase",
         verbose_name="Səbəb"
     )
+    price = models.FloatField(
+            verbose_name="Qiymət",
+            default=0
+        )
 
     operation_date = models.DateField(
         verbose_name="Tarix",
