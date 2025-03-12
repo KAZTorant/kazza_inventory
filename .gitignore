@@ -32,3 +32,8 @@ dist/
 
 # macOS
 .DS_Store
+
+# Django files no need to be added
+manage.py
+config
+requirements.txt
