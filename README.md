@@ -20,6 +20,9 @@ pip install git+https://github.com/KAZTorant/kazza_inventory.git@v1.0.0
        ...
        'inventory',
    ]
+
+   X_FRAME_OPTIONS = 'ALLOWALL' # Change value for your need.
+
    ```
 
 2. **Run Migrations:**
