@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from apps.inventory.models import InventryCategory
+from inventory.models import InventryCategory
 
 admin.site.register(InventryCategory)

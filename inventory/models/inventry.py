@@ -1,7 +1,7 @@
 from django.db import models
 
-from apps.inventory.models.category import Category
-from apps.inventory.models.supplier import Supplier
+from inventory.models.category import Category
+from inventory.models.supplier import Supplier
 
 
 class InventoryItem(models.Model):

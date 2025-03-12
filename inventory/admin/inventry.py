@@ -1,5 +1,6 @@
-from apps.inventory.models import InventoryItem
-from apps.inventory.models import InventoryRecord
+from inventory.models import InventoryItem
+from inventory.models import InventoryRecord
+
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
