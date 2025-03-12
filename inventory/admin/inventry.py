@@ -16,29 +16,25 @@ class InventoryItemAdmin(admin.ModelAdmin):
         'supplier',
         'category',
         'total_quantity',
-        'total_money_spent',
-        'latest_added_time',
-        'latest_removed_time',
+        # 'total_money_spent',
         'action_buttons'
     )
     list_filter = ('category',)
     ordering = ('category', 'name')
-    readonly_fields = ('latest_added_time',)
+    readonly_fields = ('latest_added_time', 'latest_removed_time')
 
     def total_quantity(self, obj):
-        added = obj.stock_records.filter(record_type='add').aggregate(
-            total=Sum('quantity'))['total'] or 0
-        removed = obj.stock_records.filter(record_type='remove').aggregate(
-            total=Sum('quantity'))['total'] or 0
+        added = obj.stock_records.filter(record_type='add').aggregate(total=Sum('quantity'))['total'] or 0
+        removed = obj.stock_records.filter(record_type='remove').aggregate(total=Sum('quantity'))['total'] or 0
         net_total = added - removed
         return f"{net_total} {obj.unit}"
 
     total_quantity.short_description = "Miqdar"
 
-    def total_money_spent(self, obj):
-        total_price = obj.stock_records.aggregate(total=Sum('price'))['total'] or 0
-        return f"{total_price} ₼"
-    total_money_spent.short_description = "Xərclər"
+    # def total_money_spent(self, obj):
+    #     total_price = obj.stock_records.aggregate(total=Sum('price'))['total'] or 0
+    #     return f"{total_price} ₼"
+    # total_money_spent.short_description = "Xərclər"
 
     def latest_added_time(self, obj):
         latest_record = obj.stock_records.filter(
