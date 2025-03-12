@@ -10,6 +10,7 @@ class InventoryItem(models.Model):
         ('kg', 'Kilogram'),
         ('l', 'Litr'),
         ('pcs', 'Ədəd'),
+        ('package', 'Bağlama')
     )
 
     name = models.CharField(
@@ -25,6 +26,10 @@ class InventoryItem(models.Model):
         max_length=20,
         choices=UNIT_CHOICES,
         verbose_name="Vahid"
+    )
+    price = models.FloatField(
+        verbose_name="Qiymət",
+        default=0
     )
     supplier = models.ForeignKey(
         Supplier,
