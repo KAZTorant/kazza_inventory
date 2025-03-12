@@ -1,0 +1,30 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Modal Overlay -->
+<div id="modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; opacity: 0.4; z-index: 900;"></div>
+
+<!-- Modal Container -->
+<div id="custom-modal" style="position: fixed; top: 10%; left: 50%; transform: translate(-50%, 0); z-index: 1000; background: #fff; border: 1px solid #ccc; padding: 20px; width: 500px; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+    <h1 style="margin-bottom: 20px;">{{ title }}</h1>
+    <form method="post" action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="submit-row">
+            <input type="submit" value="Yadda saxla" class="default">
+            <a href="#" id="modal-cancel" class="deletelink" style="margin-left: 10px;">İmtina et</a>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    // Close modal on "İmtina et" click.
+    document.getElementById('modal-cancel').addEventListener('click', function(e) {
+        e.preventDefault();
+        // You may choose to implement custom logic here to close the modal.
+        // For example, if this template is loaded in a popup window, simply close the window:
+        window.close();
+    });
+</script>
+{% endblock %}
