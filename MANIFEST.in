@@ -1,5 +1,5 @@
 include README.md
 include LICENSE
 
-recursive-include inventory/templates *
-recursive-include inventory/static *
+recursive-include templates *
+recursive-include static *
