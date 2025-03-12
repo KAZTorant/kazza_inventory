@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import now
 
 from inventory.models.category import Category
 from inventory.models.supplier import Supplier
@@ -61,12 +62,13 @@ class InventoryRecord(models.Model):
         decimal_places=2,
         verbose_name="Miqdar"
     )
+    RECORD_TYPE_CHOICES = (
+        ('add', 'Əlavə'),
+        ('remove', 'Silinmə')
+    )
     record_type = models.CharField(
         max_length=16,
-        choices=(
-            ('add', 'Əlavə'),
-            ('remove', 'Çıxış')
-        ),
+        choices=RECORD_TYPE_CHOICES,
         default="add",
         verbose_name="Əməliyyat növü"
     )
@@ -92,14 +94,32 @@ class InventoryRecord(models.Model):
         verbose_name="Səbəb"
     )
 
-    purchase_date = models.DateField(
-        verbose_name="Alış Tarixi"
+    operation_date = models.DateField(
+        verbose_name="Tarix",
+         help_text=(
+            "<strong>Əməliyyatın həqiqi baş verdiyi tarixi seçin.</strong><br><br>"
+
+            "<strong>📌 Alış üçün nümunə:</strong><br>"
+            "Məhsulu <strong>3 gün əvvəl</strong> almışsınız, lakin <strong>bu gün</strong> sistemə əlavə edirsiniz. "
+            "Bu halda, məhz <strong>3 gün əvvəlki tarixi</strong> (yəni alışın baş verdiyi günü) seçməlisiniz.<br><br>"
+
+            "<strong>🚨 Silinmə üçün nümunə:</strong><br>"
+            "Məhsul <strong>4 gün əvvəl</strong> istifadəyə yararsız olub, lakin siz onu <strong>bu gün</strong> sistemə daxil edirsiniz. "
+            "Tarixi düzgün göstərmək üçün <strong>4 gün əvvəlki tarixi</strong> qeyd edin.<br><br>"
+
+            "<em>Əgər bu qaydalara əməl etməsəniz, inventar məlumatları səhv ola bilər və hesabatlar yanlış nəticə verə bilər.</em>"
+            "<hr>"
+        ),
+        default=now,
     )
+
     expiration_date = models.DateField(
         null=True,
         blank=True,
-        verbose_name="Son İstifadə Tarixi"
+        verbose_name="Son İstifadə Tarixi",
+        help_text="Məhsulun son istifadə tarixini varsa, burada qeyd edin ki, nə vaxt istifadəyə yararsız olacağını izləyə biləsiniz."
     )
+
     created_at = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Yaradılma Tarixi"

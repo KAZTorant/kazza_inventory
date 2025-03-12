@@ -63,13 +63,17 @@ class InventoryItemAdmin(admin.ModelAdmin):
 
 class InventoryRecordForm(forms.ModelForm):
     inventory_unit = forms.CharField(
-        label="Vahid", disabled=True, required=False)
+        label="Vahid", 
+        disabled=True,
+        required=False
+    )
     record_type = forms.ChoiceField(
-        choices=(('add', 'Əlavə'), ('remove', 'Çıxış')),
+        choices=InventoryRecord.RECORD_TYPE_CHOICES,
         label="Əməliyyat növü"
     )
     reason = forms.ChoiceField(
         label="Səbəb",
+        choices=InventoryRecord.REASON_CHOICES,
         required=False
     )
 
@@ -81,7 +85,7 @@ class InventoryRecordForm(forms.ModelForm):
             'record_type',
             'reason',
             'quantity',
-            'purchase_date',
+            'operation_date',
             'expiration_date'
         )
 
@@ -91,29 +95,40 @@ class InventoryRecordForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if "record_type" not in self.initial:
+            return
+
+
         # Prefill inventory_unit based on the selected InventoryItem.
         if self.instance and self.instance.pk and self.instance.inventory_item:
             self.fields['inventory_unit'].initial = self.instance.inventory_item.get_unit_display()
         elif 'inventory_item' in self.initial:
             try:
-                inv_item = InventoryItem.objects.get(
-                    pk=self.initial['inventory_item'])
+                inv_item = InventoryItem.objects.get(pk=self.initial['inventory_item'])
                 self.fields['inventory_unit'].initial = inv_item.get_unit_display()
+
             except InventoryItem.DoesNotExist:
                 self.fields['inventory_unit'].initial = ""
-        # Set record_type initial if provided.
-        if 'record_type' in self.initial:
-            self.fields['record_type'].initial = self.initial['record_type']
-
+        
+        
         # Determine current record_type from POST data or initial values.
-        record_type = self.data.get(
-            'record_type') or self.initial.get('record_type') or 'add'
+        record_type = (
+            self.data.get('record_type') 
+            or 
+            self.initial.get('record_type') 
+            or
+            'add'
+        )
 
         # Set reason choices based on record_type.
         if record_type == 'add':
             self.fields['reason'].choices = self.ADD_REASON_CHOICES
+            self.fields['record_type'].choices = [InventoryRecord.RECORD_TYPE_CHOICES[0]]
         elif record_type == 'remove':
             self.fields['reason'].choices = self.REMOVE_REASON_CHOICES
+            self.fields['record_type'].choices = [InventoryRecord.RECORD_TYPE_CHOICES[1]]
+
         else:
             self.fields['reason'].choices = []
 
@@ -126,7 +141,7 @@ class InventoryRecordAdmin(admin.ModelAdmin):
         'record_type',
         'reason',
         'quantity',
-        'purchase_date',
+        'operation_date',
         'expiration_date'
     )
 
@@ -134,10 +149,9 @@ class InventoryRecordAdmin(admin.ModelAdmin):
         initial = super().get_changeform_initial_data(request)
         if 'inventory_item' in request.GET:
             initial['inventory_item'] = request.GET.get('inventory_item')
+
         if 'record_type' in request.GET:
             initial['record_type'] = request.GET.get('record_type')
-        else:
-            initial['record_type'] = 'add'
         return initial
 
     def response_add(self, request, obj, post_url_continue=None):
