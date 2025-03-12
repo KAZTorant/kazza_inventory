@@ -99,27 +99,23 @@ class InventoryRecordForm(forms.ModelForm):
         if "record_type" not in self.initial:
             return
 
+        inventory_item_id = 0
 
         # Prefill inventory_unit based on the selected InventoryItem.
         if self.instance and self.instance.pk and self.instance.inventory_item:
-            self.fields['inventory_unit'].initial = self.instance.inventory_item.get_unit_display()
+            inventory_item_id = self.instance.inventory_item.pk
         elif 'inventory_item' in self.initial:
-            try:
-                inv_item = InventoryItem.objects.get(pk=self.initial['inventory_item'])
-                self.fields['inventory_unit'].initial = inv_item.get_unit_display()
+            inventory_item_id = self.initial['inventory_item']
 
-            except InventoryItem.DoesNotExist:
-                self.fields['inventory_unit'].initial = ""
+        inventory_items = InventoryItem.objects.filter(pk=inventory_item_id)
         
-        
+        if inventory_items.exists():
+            self.fields['inventory_unit'].initial = inventory_items.first().get_unit_display()
+            self.fields['inventory_item'].queryset = inventory_items
+            self.fields['inventory_item'].empty_label = None
+
         # Determine current record_type from POST data or initial values.
-        record_type = (
-            self.data.get('record_type') 
-            or 
-            self.initial.get('record_type') 
-            or
-            'add'
-        )
+        record_type = ( self.data.get('record_type') or self.initial.get('record_type'))
 
         # Set reason choices based on record_type.
         if record_type == 'add':
@@ -128,9 +124,6 @@ class InventoryRecordForm(forms.ModelForm):
         elif record_type == 'remove':
             self.fields['reason'].choices = self.REMOVE_REASON_CHOICES
             self.fields['record_type'].choices = [InventoryRecord.RECORD_TYPE_CHOICES[1]]
-
-        else:
-            self.fields['reason'].choices = []
 
 
 class InventoryRecordAdmin(admin.ModelAdmin):
