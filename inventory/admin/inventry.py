@@ -1,14 +1,17 @@
-from inventory.models import InventoryItem
-from inventory.models import InventoryRecord
-
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.http import urlencode
 from django.db.models import Sum
 from django import forms
 
+from inventory.models import InventoryItem
+from inventory.models import InventoryRecord
+
 
 class InventoryItemAdmin(admin.ModelAdmin):
+    change_form_template = "admin/inventory/inventory_item_change_form.html"
+
     list_display = (
         'name',
         'category',
@@ -59,7 +62,7 @@ class InventoryItemAdmin(admin.ModelAdmin):
             remove_url
         )
     action_buttons.short_description = "Əməliyyatlar"
-
+    
 
 class InventoryRecordForm(forms.ModelForm):
     inventory_unit = forms.CharField(
@@ -137,6 +140,10 @@ class InventoryRecordAdmin(admin.ModelAdmin):
         'operation_date',
         'expiration_date'
     )
+
+    list_display = ('id', 'inventory_item', 'record_type', 'quantity', 'operation_date')
+    list_filter = ('inventory_item', 'record_type', 'operation_date', )
+    list_per_page = 100 
 
     def get_changeform_initial_data(self, request):
         initial = super().get_changeform_initial_data(request)
