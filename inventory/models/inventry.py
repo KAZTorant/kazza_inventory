@@ -49,9 +49,10 @@ class InventoryItem(models.Model):
         verbose_name_plural = "Anbar Məhsulları"
 
     def __str__(self):
-        return self.name
-
-
+        if self.supplier:
+            return f"{self.name} ({self.supplier or ''})"
+        return f"{self.name or 'Adsız Məhsul'}"
+    
 class InventoryRecord(models.Model):
     inventory_item = models.ForeignKey(
         InventoryItem,

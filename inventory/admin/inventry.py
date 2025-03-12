@@ -16,6 +16,7 @@ class InventoryItemAdmin(admin.ModelAdmin):
         'supplier',
         'category',
         'total_quantity',
+        'total_money_spent',
         'latest_added_time',
         'latest_removed_time',
         'action_buttons'
@@ -32,7 +33,12 @@ class InventoryItemAdmin(admin.ModelAdmin):
         net_total = added - removed
         return f"{net_total} {obj.unit}"
 
-    total_quantity.short_description = "Ümumi Miqdar"
+    total_quantity.short_description = "Miqdar"
+
+    def total_money_spent(self, obj):
+        total_price = obj.stock_records.aggregate(total=Sum('price'))['total'] or 0
+        return f"{total_price} ₼"
+    total_money_spent.short_description = "Xərclər"
 
     def latest_added_time(self, obj):
         latest_record = obj.stock_records.filter(
@@ -137,13 +143,19 @@ class InventoryRecordAdmin(admin.ModelAdmin):
         'record_type',
         'reason',
         'quantity',
+        'price',
         'operation_date',
         'expiration_date'
     )
 
-    list_display = ('id', 'inventory_item', 'record_type', 'quantity', 'operation_date')
+    list_display = ('inventory_item', 'record_type', 'reason', 'quantity_with_unit','price', 'operation_date')
     list_filter = ('inventory_item', 'record_type', 'operation_date', )
     list_per_page = 100 
+
+    def quantity_with_unit(self, obj) -> str:
+        return f"{obj.quantity} {obj.inventory_item.unit}"
+
+    quantity_with_unit.short_description = "Miqdar"
 
     def get_changeform_initial_data(self, request):
         initial = super().get_changeform_initial_data(request)
