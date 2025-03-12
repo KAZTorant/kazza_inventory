@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='inventory',           
-    version='1.0.1',
+    version='1.0.2',
     description='KAZZA inventory management system',
     author='Zakir Aghayev.',
     author_email='zakir-aghayev@outlook.com',

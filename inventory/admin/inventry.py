@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
-from django.utils.http import urlencode
 from django.db.models import Sum
 from django import forms
 
@@ -14,6 +13,7 @@ class InventoryItemAdmin(admin.ModelAdmin):
 
     list_display = (
         'name',
+        'supplier',
         'category',
         'total_quantity',
         'latest_added_time',
