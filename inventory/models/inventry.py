@@ -82,6 +82,7 @@ class InventoryRecord(models.Model):
     )
     REASON_CHOICES_REMOVE = (
         ('used', 'İstifadə edilmiş'),
+        ('sold', 'Satılmış'),
         ('expired', 'Müddəti bitmiş'),
         ('damaged', 'Zədələnmiş'),
         ('spoilage', 'Çürükmüş'),
