@@ -79,6 +79,7 @@ class InventoryRecord(models.Model):
         ('purchase', 'Alış'),
         ('gift', 'Hədiyə'),
         ('adjustment', 'Düzəliş'),
+        ('return', 'Qaytarılmış'),
     )
     REASON_CHOICES_REMOVE = (
         ('used', 'İstifadə edilmiş'),
