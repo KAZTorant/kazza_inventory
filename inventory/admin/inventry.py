@@ -27,7 +27,7 @@ class InventoryItemAdmin(admin.ModelAdmin):
         added = obj.stock_records.filter(record_type='add').aggregate(total=Sum('quantity'))['total'] or 0
         removed = obj.stock_records.filter(record_type='remove').aggregate(total=Sum('quantity'))['total'] or 0
         net_total = added - removed
-        return f"{net_total} {obj.unit}"
+        return f"{round(net_total, 3)} {obj.unit}"
 
     total_quantity.short_description = "Miqdar"
 
